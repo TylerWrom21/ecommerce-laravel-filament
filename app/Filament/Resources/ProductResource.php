@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Models\Product;
+use App\Models\Category;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
@@ -27,7 +28,7 @@ class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-cake';
 
     public static function form(Form $form): Form
     {
@@ -39,7 +40,7 @@ class ProductResource extends Resource
                 Hidden::make('user_id')->default(auth()->id()),
                 TextInput::make('price')->required()->prefix('USD')->numeric()->minValue(0)->maxValue(999999999999999)->inputMode('decimal'),
                 Select::make('status')->required()->options(['available' => 'Available','notready' => 'Not Ready',])->native(false),
-                Select::make('category')->required()->options(['available' => 'Available','notready' => 'Not Ready',])->native(false),
+                Select::make('category_id')->label('Category')->required()->options(Category::all()->pluck('name', 'id'))->native(false),
                 TextInput::make('quantity')->required()->numeric()->inputMode('decimal')->minValue(0)->maxValue(100000),
                 TagsInput::make('tags')->required()->separator(',')->nestedRecursiveRules(['min:3','max:48',]),
                 Textarea::make('description')->required()->columnSpan('full'),
@@ -53,8 +54,10 @@ class ProductResource extends Resource
             ->columns([
                 TextColumn::make('id')->searchable(),
                 TextColumn::make('name')->searchable(),
-                TextColumn::make('user_id')->searchable(),
-                TextColumn::make('status')->searchable(),
+                TextColumn::make('user.name')->searchable(),
+                TextColumn::make('category.name')->searchable()->sortable(),
+                TextColumn::make('status')->searchable()->sortable(),
+                // TextColumn::make('rate')->searchable()->sortable(),
                 TextColumn::make('quantity')->searchable(),
                 TextColumn::make('tags')->searchable(),
             ])

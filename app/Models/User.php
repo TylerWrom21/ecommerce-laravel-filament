@@ -8,11 +8,12 @@ use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Filament\Panel;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     public function canAccessPanel(Panel $panel): bool
     {
@@ -51,5 +52,21 @@ class User extends Authenticatable implements FilamentUser
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
+    public function cart()
+    {
+        return $this->belongsTo(Cart::class);
+    }
+    public function review()
+    {
+        return $this->belongsTo(Review::class);
+    }
+    public function wishlist()
+    {
+        return $this->belongsTo(Wishlist::class);
     }
 }
